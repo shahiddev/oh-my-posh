@@ -126,17 +126,12 @@ func (e *Engine) isWarp() bool {
 	return e.Env.Getenv("TERM_PROGRAM") == "WarpTerminal"
 }
 
-func (e *Engine) shouldFill(filler string, blockLength int) (string, bool) {
+func (e *Engine) shouldFill(filler string, remaining, blockLength int) (string, bool) {
 	if len(filler) == 0 {
 		return "", false
 	}
 
-	terminalWidth, err := e.Env.TerminalWidth()
-	if err != nil || terminalWidth == 0 {
-		return "", false
-	}
-
-	padLength := terminalWidth - e.currentLineLength - blockLength
+	padLength := remaining - blockLength
 	if padLength <= 0 {
 		return "", false
 	}
@@ -223,28 +218,28 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 		text, length := block.RenderSegments()
 		e.rpromptLength = length
 
-		if _, OK := e.canWriteRightBlock(false); OK {
+		space, OK := e.canWriteRightBlock(false)
+		if OK {
 			switch block.Overflow {
 			case Break:
 				e.newline()
 			case Hide:
 				// make sure to fill if needed
-				if padText, OK := e.shouldFill(block.Filler, 0); OK {
+				if padText, OK := e.shouldFill(block.Filler, space, 0); OK {
 					e.write(padText)
 				}
 				return
 			}
 		}
 
-		if padText, OK := e.shouldFill(block.Filler, length); OK {
+		if padText, OK := e.shouldFill(block.Filler, space, length); OK {
 			// in this case we can print plain
 			e.write(padText)
 			e.write(text)
 			return
 		}
 
-		prompt := e.Writer.CarriageForward()
-		prompt += e.Writer.GetCursorForRightWrite(length, block.HorizontalOffset)
+		prompt := strings.Repeat(" ", space-length)
 		prompt += text
 		e.currentLineLength = 0
 		e.write(prompt)
