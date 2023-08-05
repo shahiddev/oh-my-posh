@@ -150,18 +150,14 @@
           "type": "executiontime"
         },
         {
-          "background": "#00897b",
-          "background_templates": [
-            "{{ if gt .Code 0 }}#e91e63{{ end }}"
-          ],
-          "foreground": "#ffffff",
+          "type": "pulumi",
+          "style": "powerline",
+          "powerline_symbol": "",
+          "foreground": "#351ae1",
+          "background": "#000000",
           "properties": {
-            "always_enabled": true
-          },
-          "style": "diamond",
-          "template": "<parentBackground>\ue0b0</> \ue23a ",
-          "trailing_diamond": "\ue0b4",
-          "type": "status"
+            "newprop": "\uEFF1"
+          }
         }
       ],
       "type": "prompt"

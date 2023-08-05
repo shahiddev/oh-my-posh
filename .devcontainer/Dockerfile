@@ -2,6 +2,27 @@
 
 # [Choice] Go version (use -bullseye variants on local arm64/Apple Silicon): 1, 1.16, 1.17, 1-bullseye, 1.16-bullseye, 1.17-bullseye, 1-buster, 1.16-buster, 1.17-buster
 ARG VARIANT=1-bullseye
+ARG PULUMI_VERSION=latest
+
+# --------------------------------------------------------------------------------
+
+FROM debian:buster-slim AS pulumi-builder
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get install -y \
+    curl \
+    build-essential \
+    git
+
+
+RUN if [ "$PULUMI_VERSION" = "latest" ]; then \
+    curl -fsSL https://get.pulumi.com/ | bash; \
+    else \
+    curl -fsSL https://get.pulumi.com/ | bash -s -- --version $PULUMI_VERSION ; \
+    fi
+
+# --------------------------------------------------------------------------------
+
 FROM mcr.microsoft.com/vscode/devcontainers/go:0-${VARIANT}
 
 # [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
@@ -47,7 +68,8 @@ RUN mkdir /home/${USERNAME}/bin; \
 # NOTE: devcontainers are Linux-only at this time but when
 # Windows or Darwin is supported someone will need to improve
 # the code logic above.
-
+COPY --from=pulumi-builder /root/.pulumi/bin/pulumi /pulumi/bin/pulumi
+ENV PATH "/pulumi/bin:${PATH}"
 # Setup a neat little PowerShell experience
 RUN pwsh -Command Install-Module posh-git -Scope AllUsers -Force; \
     pwsh -Command Install-Module z -Scope AllUsers -Force; \
