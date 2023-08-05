@@ -14,7 +14,7 @@
       "POSH_THEME": "/workspaces/oh-my-posh/themes/jandedobbeleer.omp.json",
 
       // Override me with your own timezone:
-      "TZ": "UTC",
+      "TZ": "Pacific/Auckland",
       // Use one of the "TZ database name" entries from:
       // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
