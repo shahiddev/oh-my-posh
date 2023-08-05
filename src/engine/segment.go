@@ -189,6 +189,8 @@ const (
 	PATH SegmentType = "path"
 	// PERL writes which perl version is currently active
 	PERL SegmentType = "perl"
+	// PULUMI writes which pulumi version is currently active
+	PULUMI SegmentType = "pulumi"
 	// PHP writes which php version is currently active
 	PHP SegmentType = "php"
 	// PLASTIC represents the plastic scm status and information
@@ -302,6 +304,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	OWM:           func() SegmentWriter { return &segments.Owm{} },
 	PATH:          func() SegmentWriter { return &segments.Path{} },
 	PERL:          func() SegmentWriter { return &segments.Perl{} },
+	PULUMI:        func() SegmentWriter { return &segments.Pulumi{} },
 	PHP:           func() SegmentWriter { return &segments.Php{} },
 	PLASTIC:       func() SegmentWriter { return &segments.Plastic{} },
 	PROJECT:       func() SegmentWriter { return &segments.Project{} },
